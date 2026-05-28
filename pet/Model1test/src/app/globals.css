@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #050505;
+  --color-foreground: #f0f0f0;
+  --color-glass: rgba(255, 255, 255, 0.04);
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --color-glass-hover: rgba(255, 255, 255, 0.08);
+  --color-accent: #6ecbf5;
+  --color-accent-dim: rgba(110, 203, 245, 0.15);
+  --color-surface: #0a0a0a;
+  --color-muted: #888888;
+  --font-sans: Geist, system-ui, sans-serif;
+  --font-mono: Geist Mono, monospace;
+  --font-display: Outfit, Geist, system-ui, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+html {
+  background: #050505;
+  color: #f0f0f0;
+}
+
+body {
+  background: #050505;
+  color: #f0f0f0;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(110, 203, 245, 0.3);
+  color: #f0f0f0;
+}
+
+@utility glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+@utility glass-strong {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 12px 56px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glare {
+  position: relative;
+  overflow: hidden;
+}
+
+.glare::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 0%),
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+@utility glass-border-accent {
+  border: 1px solid rgba(110, 203, 245, 0.15);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(110, 203, 245, 0.1),
+    0 0 60px rgba(110, 203, 245, 0.04);
+}
+
+@layer base {
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
