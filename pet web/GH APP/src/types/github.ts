@@ -46,23 +46,6 @@ export interface GithubEvent {
   };
 }
 
-export interface GithubCommit {
-  sha: string;
-  html_url: string;
-  commit: {
-    message: string;
-    author: {
-      name: string;
-      date: string;
-    };
-  };
-  stats?: {
-    additions: number;
-    deletions: number;
-    total: number;
-  };
-}
-
 export type LanguageMap = Record<string, number>;
 
 export interface RepoAnalysis {
@@ -76,10 +59,4 @@ export interface RepoAnalysis {
 export interface ActivityPoint {
   label: string;
   value: number;
-}
-
-export interface RepoDetailsData {
-  repo: GithubRepo;
-  languages: LanguageMap;
-  commits: GithubCommit[];
 }

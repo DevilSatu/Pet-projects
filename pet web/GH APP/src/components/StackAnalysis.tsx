@@ -1,5 +1,4 @@
 import { Code2, GitFork, Star } from "lucide-react";
-import { Link } from "react-router-dom";
 import { GithubRepo, LanguageMap, RepoAnalysis } from "../types/github";
 import { compactNumber, readableDate } from "../lib/format";
 import { Panel } from "./Panel";
@@ -39,12 +38,9 @@ export function StackAnalysis({ analyses }: StackAnalysisProps) {
 
 function RepoCard({ repo }: { repo: GithubRepo }) {
   return (
-    <Link
-      className="group flex min-h-56 flex-col rounded-lg border border-[#30363d] bg-[#161b22] p-4 transition hover:-translate-y-0.5 hover:border-[#2ea043] hover:bg-[#0d1117] hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-[#2ea043] focus:ring-offset-2 focus:ring-offset-[#010409]"
-      to={`/repo/${repo.owner.login}/${repo.name}`}
-    >
+    <article className="flex min-h-56 flex-col rounded-lg border border-[#30363d] bg-[#161b22] p-4">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="line-clamp-2 text-base font-semibold text-[#e6edf3] group-hover:text-[#2ea043]">{repo.name}</h3>
+        <h3 className="line-clamp-2 text-base font-semibold text-[#e6edf3]">{repo.name}</h3>
         <Code2 className="shrink-0 text-slate-400" size={18} strokeWidth={2} />
       </div>
       <p className="mt-3 line-clamp-4 flex-1 text-sm leading-6 text-slate-300">
@@ -64,7 +60,7 @@ function RepoCard({ repo }: { repo: GithubRepo }) {
           </span>
         </span>
       </div>
-    </Link>
+    </article>
   );
 }
 

@@ -12,7 +12,19 @@ export function App() {
 
   return (
     <div className="min-h-[100dvh] bg-[#010409] text-[#e6edf3]">
-      <SearchPanel loading={loading} onSearch={loadUser} />
+      <SearchPanel
+        action={
+          <Link
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-[#30363d] bg-[#161b22] px-4 py-2 text-sm font-semibold text-[#e6edf3] transition hover:border-[#2ea043] hover:text-[#2ea043] active:translate-y-px"
+            to="/resume"
+          >
+            <FileText aria-hidden="true" size={16} strokeWidth={2} />
+            Create Resume
+          </Link>
+        }
+        loading={loading}
+        onSearch={loadUser}
+      />
       {error ? (
         <div className="mx-auto max-w-7xl px-4 pt-5 lg:px-6">
           <div className="flex items-start gap-3 rounded-lg border border-orange-400/40 bg-orange-400/15 p-4 text-sm text-orange-100">
@@ -32,19 +44,6 @@ export function App() {
       {!loading && !user ? <EmptyState /> : null}
       {!loading && user ? (
         <main className="mx-auto grid max-w-7xl gap-5 px-4 py-6 lg:px-6">
-          <div className="flex flex-col gap-3 rounded-lg border border-[#30363d] bg-[#0d1117] p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#2ea043]">Resume view</p>
-              <p className="mt-1 text-sm text-slate-300">Turn this GitHub analysis into an editable resume page.</p>
-            </div>
-            <Link
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#2ea043] px-4 py-2 text-sm font-semibold text-[#010409] transition hover:bg-[#3fb950] active:translate-y-px"
-              to="/resume"
-            >
-              <FileText aria-hidden="true" size={16} strokeWidth={2} />
-              Make resume
-            </Link>
-          </div>
           <ProfileOverview activity={activity} user={user} />
           <StackAnalysis analyses={repoAnalyses} />
         </main>

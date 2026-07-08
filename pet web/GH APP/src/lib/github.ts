@@ -2,13 +2,11 @@ import axios, { AxiosError } from "axios";
 import { format, parseISO, subMonths } from "date-fns";
 import {
   ActivityPoint,
-  GithubCommit,
   GithubEvent,
   GithubRepo,
   GithubUser,
   LanguageMap,
   RepoAnalysis,
-  RepoDetailsData,
 } from "../types/github";
 
 const api = axios.create({
@@ -92,21 +90,6 @@ export async function fetchRepoAnalysis(owner: string, repo: string, baseRepo?: 
   });
 }
 
-export async function fetchRepoDetails(owner: string, repo: string): Promise<RepoDetailsData> {
-  try {
-    return await cached(`repo-details:${owner}/${repo}`, async () => {
-      const [repoRes, languages, commits] = await Promise.all([
-        api.get<GithubRepo>(`/repos/${owner}/${repo}`),
-        fetchLanguages(owner, repo),
-        fetchCommits(owner, repo),
-      ]);
-      return { repo: repoRes.data, languages, commits };
-    });
-  } catch (error) {
-    throw new Error(githubError(error));
-  }
-}
-
 async function fetchLanguages(owner: string, repo: string) {
   try {
     const response = await api.get<LanguageMap>(`/repos/${owner}/${repo}/languages`);
@@ -136,25 +119,6 @@ async function fetchPackageJson(owner: string, repo: string) {
   } catch {
     return null;
   }
-}
-
-async function fetchCommits(owner: string, repo: string) {
-  const list = await api.get<GithubCommit[]>(`/repos/${owner}/${repo}/commits`, {
-    params: { per_page: 30 },
-  });
-
-  const detailed = await Promise.all(
-    list.data.slice(0, 10).map(async (commit) => {
-      try {
-        const response = await api.get<GithubCommit>(`/repos/${owner}/${repo}/commits/${commit.sha}`);
-        return response.data;
-      } catch {
-        return commit;
-      }
-    }),
-  );
-
-  return detailed.reverse();
 }
 
 function buildActivity(events: GithubEvent[]): ActivityPoint[] {

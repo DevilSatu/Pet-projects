@@ -37,6 +37,10 @@ a {
   color: inherit;
 }
 
+.print-only {
+  display: none;
+}
+
 .chart-shell canvas {
   max-height: 100%;
 }
@@ -54,5 +58,86 @@ a {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  html,
+  body,
+  #root {
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .printable-resume,
+  .printable-resume header,
+  .printable-resume main,
+  .printable-resume section,
+  .printable-resume div {
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .printable-resume {
+    min-height: auto !important;
+    color: #111827 !important;
+  }
+
+  .printable-resume header {
+    border-bottom: 1px solid #d1d5db !important;
+  }
+
+  .printable-resume main {
+    max-width: none !important;
+    gap: 12px !important;
+    padding: 16px 0 0 !important;
+  }
+
+  .printable-resume section {
+    break-inside: avoid;
+    border-color: #d1d5db !important;
+  }
+
+  .printable-resume * {
+    color: #111827 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .printable-resume p,
+  .printable-resume span,
+  .printable-resume dd,
+  .printable-resume dt {
+    color: #374151 !important;
+  }
+
+  .printable-resume h1,
+  .printable-resume h2,
+  .printable-resume h3 {
+    color: #030712 !important;
+  }
+
+  .printable-resume [class*="tracking-"] {
+    color: #047857 !important;
+  }
+
+  .printable-resume [class*="bg-[#2ea043]"],
+  .printable-resume [style*="width"] {
+    background: #10b981 !important;
+  }
+
+  .printable-resume a {
+    text-decoration: none !important;
   }
 }
