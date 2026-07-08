@@ -12,7 +12,7 @@ export function TechBarChart({ technologies }: TechBarChartProps) {
   }
 
   return (
-    <ChartFrame>
+    <ChartFrame height={technologies.length > 5 ? "h-96" : "h-72"}>
       <Bar
         data={{
           labels: technologies.map((item) => item.name),

@@ -84,7 +84,9 @@ a {
   .printable-resume header,
   .printable-resume main,
   .printable-resume section,
-  .printable-resume div {
+  .printable-resume div,
+  .printable-resume article,
+  .printable-resume a {
     background: #ffffff !important;
     box-shadow: none !important;
   }
@@ -107,6 +109,41 @@ a {
   .printable-resume section {
     break-inside: avoid;
     border-color: #d1d5db !important;
+  }
+
+  .printable-resume section,
+  .printable-resume article,
+  .printable-resume a,
+  .printable-resume code,
+  .printable-resume [class*="border-[#30363d]"] {
+    border-color: #d1d5db !important;
+  }
+
+  .printable-resume a,
+  .printable-resume article {
+    border-width: 1px !important;
+  }
+
+  .printable-resume [class*="bg-[#010409]"],
+  .printable-resume [class*="bg-[#161b22]"] {
+    background: #ffffff !important;
+  }
+
+  .printable-resume code {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+
+  .printable-resume code *,
+  .printable-resume code {
+    color: #0f172a !important;
+  }
+
+  .printable-resume span[class*="rounded"][class*="bg-[#010409]"],
+  .printable-resume span[class*="rounded"][class*="bg-[#161b22]"] {
+    background: #f1f5f9 !important;
+    border: 1px solid #d1d5db !important;
   }
 
   .printable-resume * {

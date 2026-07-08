@@ -5,7 +5,9 @@ import {
   Download,
   FileText,
   FolderGit2,
+  Plus,
   Star,
+  Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -14,10 +16,19 @@ import { compactNumber, percent, readableDate } from "../lib/format";
 import { useAnalyzerStore } from "../store/analyzerStore";
 import { GithubRepo, LanguageMap, RepoAnalysis } from "../types/github";
 
+interface PersonalSkill {
+  id: number;
+  name: string;
+  rating: number;
+}
+
 export function ResumePage() {
   const { user, repos, repoAnalyses } = useAnalyzerStore();
   const [about, setAbout] = useState("");
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [skillName, setSkillName] = useState("");
+  const [skillRating, setSkillRating] = useState(7);
+  const [personalSkills, setPersonalSkills] = useState<PersonalSkill[]>([]);
 
   const resumeSignals = useMemo(() => buildResumeSignals(repoAnalyses), [repoAnalyses]);
   const recentRepos = repos.slice(0, 5);
@@ -41,6 +52,23 @@ export function ResumePage() {
       window.print();
       window.setTimeout(finishExport, 1000);
     });
+  }
+
+  function addPersonalSkill() {
+    const name = skillName.trim();
+    if (!name) return;
+
+    setPersonalSkills((current) => [...current, { id: Date.now(), name, rating: skillRating }]);
+    setSkillName("");
+    setSkillRating(7);
+  }
+
+  function updatePersonalSkillRating(id: number, rating: number) {
+    setPersonalSkills((current) => current.map((skill) => (skill.id === id ? { ...skill, rating } : skill)));
+  }
+
+  function removePersonalSkill(id: number) {
+    setPersonalSkills((current) => current.filter((skill) => skill.id !== id));
   }
 
   if (!user) {
@@ -112,6 +140,63 @@ export function ResumePage() {
             value={about}
           />
           <p className="print-only whitespace-pre-wrap text-sm leading-6 text-slate-700">{about}</p>
+        </Panel>
+
+        <Panel title="Personal Skills" eyebrow="Editable ratings">
+          <div className="grid gap-4">
+            <div className="no-print grid gap-3 sm:grid-cols-[1fr_112px_auto]">
+              <label className="sr-only" htmlFor="personal-skill">
+                Personal skill
+              </label>
+              <input
+                id="personal-skill"
+                className="min-w-0 rounded-lg border border-[#30363d] bg-[#010409] px-3 py-2 text-sm text-[#e6edf3] outline-none placeholder:text-slate-500 focus:border-[#2ea043] focus:ring-2 focus:ring-[#2ea043]/30"
+                onChange={(event) => setSkillName(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") addPersonalSkill();
+                }}
+                placeholder="Teamwork, stress resistance..."
+                value={skillName}
+              />
+              <label className="sr-only" htmlFor="personal-skill-rating">
+                Rating from 0 to 10
+              </label>
+              <input
+                id="personal-skill-rating"
+                className="rounded-lg border border-[#30363d] bg-[#010409] px-3 py-2 text-sm text-[#e6edf3] outline-none focus:border-[#2ea043] focus:ring-2 focus:ring-[#2ea043]/30"
+                max={10}
+                min={0}
+                onChange={(event) => setSkillRating(Number(event.target.value))}
+                type="number"
+                value={skillRating}
+              />
+              <button
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#2ea043] px-4 py-2 text-sm font-semibold text-[#010409] transition hover:bg-[#3fb950] active:translate-y-px"
+                onClick={addPersonalSkill}
+                type="button"
+              >
+                <Plus aria-hidden="true" size={16} strokeWidth={2} />
+                Add
+              </button>
+            </div>
+
+            <div className="grid gap-3">
+              {personalSkills.length ? (
+                personalSkills.map((skill) => (
+                  <PersonalSkillRow
+                    key={skill.id}
+                    onRemove={removePersonalSkill}
+                    onUpdateRating={updatePersonalSkillRating}
+                    skill={skill}
+                  />
+                ))
+              ) : (
+                <p className="rounded-lg border border-dashed border-[#30363d] p-4 text-sm leading-6 text-slate-300">
+                  Add personal skills and rate each one from 0 to 10.
+                </p>
+              )}
+            </div>
+          </div>
         </Panel>
 
         <section className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
@@ -246,6 +331,42 @@ function TechnologyArray({ technologies }: { technologies: Array<{ name: string;
           </span>
         ))}
       </div>
+    </div>
+  );
+}
+
+function PersonalSkillRow({
+  onRemove,
+  onUpdateRating,
+  skill,
+}: {
+  onRemove: (id: number) => void;
+  onUpdateRating: (id: number, rating: number) => void;
+  skill: PersonalSkill;
+}) {
+  return (
+    <div className="grid gap-3 rounded-lg border border-[#30363d] bg-[#161b22] p-3 sm:grid-cols-[1fr_180px_auto] sm:items-center">
+      <p className="min-w-0 text-sm font-semibold text-[#e6edf3]">{skill.name}</p>
+      <div className="flex items-center gap-3">
+        <input
+          aria-label={`${skill.name} rating`}
+          className="no-print w-full accent-[#2ea043]"
+          max={10}
+          min={0}
+          onChange={(event) => onUpdateRating(skill.id, Number(event.target.value))}
+          type="range"
+          value={skill.rating}
+        />
+        <span className="w-10 text-right text-sm font-semibold text-[#2ea043]">{skill.rating}/10</span>
+      </div>
+      <button
+        aria-label={`Remove ${skill.name}`}
+        className="no-print inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#30363d] text-slate-300 transition hover:border-red-400 hover:text-red-300"
+        onClick={() => onRemove(skill.id)}
+        type="button"
+      >
+        <Trash2 aria-hidden="true" size={16} strokeWidth={2} />
+      </button>
     </div>
   );
 }

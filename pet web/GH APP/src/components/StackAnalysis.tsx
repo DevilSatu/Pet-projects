@@ -71,7 +71,7 @@ function aggregateLanguages(analyses: RepoAnalysis[]): LanguageMap {
       result[language] = (result[language] ?? 0) + bytes;
     }
   }
-  return Object.fromEntries(Object.entries(result).sort((a, b) => b[1] - a[1]).slice(0, 5));
+  return Object.fromEntries(Object.entries(result).sort((a, b) => b[1] - a[1]).slice(0, 8));
 }
 
 function aggregateTechnologies(analyses: RepoAnalysis[]) {
@@ -83,5 +83,5 @@ function aggregateTechnologies(analyses: RepoAnalysis[]) {
   }
   return Array.from(counts, ([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+    .slice(0, 8);
 }

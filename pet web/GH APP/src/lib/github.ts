@@ -18,6 +18,7 @@ const api = axios.create({
 
 const cache = new Map<string, { expires: number; value: unknown }>();
 const ttl = 1000 * 60 * 20;
+const cacheVersion = "profile-v2";
 
 async function cached<T>(key: string, loader: () => Promise<T>) {
   const hit = cache.get(key);
@@ -43,11 +44,11 @@ function githubError(error: unknown) {
 
 export async function fetchProfileBundle(username: string) {
   try {
-    return await cached(`profile:${username}`, async () => {
+    return await cached(`${cacheVersion}:profile:${username}`, async () => {
       const [userRes, reposRes, eventsRes] = await Promise.all([
         api.get<GithubUser>(`/users/${username}`),
         api.get<GithubRepo[]>(`/users/${username}/repos`, {
-          params: { sort: "updated", per_page: 10, direction: "desc" },
+          params: { sort: "updated", per_page: 30, direction: "desc" },
         }),
         api.get<GithubEvent[]>(`/users/${username}/events`, {
           params: { per_page: 100 },
@@ -71,7 +72,7 @@ export async function fetchProfileBundle(username: string) {
 }
 
 export async function fetchRepoAnalysis(owner: string, repo: string, baseRepo?: GithubRepo) {
-  return cached<RepoAnalysis>(`repo-analysis:${owner}/${repo}`, async () => {
+  return cached<RepoAnalysis>(`${cacheVersion}:repo-analysis:${owner}/${repo}`, async () => {
     const repoPromise = baseRepo ? Promise.resolve({ data: baseRepo }) : api.get<GithubRepo>(`/repos/${owner}/${repo}`);
     const [repoRes, languages, readme, packageJson] = await Promise.all([
       repoPromise,
@@ -157,10 +158,38 @@ const techMatchers: Array<{ name: string; tests: string[] }> = [
 
 function detectTechnologies(repo: GithubRepo, readme: string, packageJson: Record<string, unknown> | null) {
   const deps = packageJson ? collectPackageNames(packageJson).join(" ") : "";
+  const languageSignal = repo.language ?? "";
   const haystack = `${repo.topics?.join(" ") ?? ""} ${repo.description ?? ""} ${readme} ${deps}`.toLowerCase();
-  return techMatchers
+  const detected = techMatchers
     .filter((matcher) => matcher.tests.some((test) => haystack.includes(test)))
     .map((matcher) => matcher.name);
+
+  if (packageJson) detected.push("Node.js");
+  if (languageSignal) detected.push(normalizeTechnologyName(languageSignal));
+
+  return Array.from(new Set(detected));
+}
+
+function normalizeTechnologyName(language: string) {
+  const normalized: Record<string, string> = {
+    JavaScript: "JavaScript",
+    TypeScript: "TypeScript",
+    HTML: "HTML",
+    CSS: "CSS",
+    Python: "Python",
+    Java: "Java",
+    "C#": "C#",
+    "C++": "C++",
+    PHP: "PHP",
+    Ruby: "Ruby",
+    Go: "Go",
+    Rust: "Rust",
+    Dart: "Dart",
+    Kotlin: "Kotlin",
+    Swift: "Swift",
+  };
+
+  return normalized[language] ?? language;
 }
 
 function collectPackageNames(packageJson: Record<string, unknown>) {
