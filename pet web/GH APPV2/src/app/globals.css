@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+  background-color: #0D1117;
+  color: #F0F6FC;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0D1117;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #30363D;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #484F58;
+}
+
+@layer components {
+  .card-base {
+    @apply bg-github-card border border-github-border rounded-xl p-5 transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card-base hover:border-github-accent hover:shadow-glow hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-github-accentDark to-chart-purple text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-glow active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply border border-github-border text-github-text font-medium py-2.5 px-6 rounded-lg transition-all duration-200 hover:bg-github-hover hover:border-github-muted;
+  }
+
+  .input-base {
+    @apply w-full bg-github-bg border border-github-border rounded-lg px-4 py-3 text-github-text placeholder-github-muted focus:outline-none focus:border-github-accent focus:shadow-glow transition-all duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-github-hover text-github-accent border border-github-border;
+  }
+
+  .stat-card {
+    @apply card-base flex flex-col items-center justify-center text-center min-h-[100px];
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-github-text mb-4;
+  }
+
+  .page-enter {
+    @apply animate-[fadeInUp_0.4s_ease-out];
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(88, 166, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(88, 166, 255, 0.15);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
